@@ -1,9 +1,88 @@
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { ReactComponent as ArrowRightIcon } from "../assets/svg/keyboardArrowRightIcon.svg";
+import VisibilityIcon from "../assets/svg/visibilityIcon.svg";
+
 const SignIn = () => {
-    return (
-      <div>
-        SIGN IN
-      </div>
-    );
+
+        const [showPassword, setShowPassword] = useState(false);
+
+        const [formData, setFormData] = useState({
+            email: '',
+            password: ''
+        });
+
+        const { email, password } = formData;
+
+        const navigate = useNavigate();
+
+        const on_change = (e) => {
+
+            //e.preventDefault();
+
+            setFormData((previousState) => ({
+                ...previousState,
+                [e.target.id]: e.target.value
+            }));
+        };
+
+        return (
+            <div className="pageContainer">
+                <header>
+                    <p className="pageHeader">
+                        Welcome Back!
+                    </p>
+                </header>
+                <form>
+                    <input 
+                        type="email" 
+                        className="emailInput" 
+                        placeholder="Email" 
+                        id="email" 
+                        value={email}
+                        onChange={on_change}
+                    />
+
+                    <div className="passwordInputDiv">
+                        <input 
+                            id="password"
+                            type={showPassword ? 'text' : 'password'}
+                            className="passwordInput"
+                            placeholder="Password"
+                            value={password}
+                            onChange={on_change}
+                        />
+                        <img 
+                            src={VisibilityIcon} alt="Show Password"
+                            className="showPassword"
+                            onClick={() => setShowPassword((previousState) => !previousState)}
+                        />
+                    </div>
+
+                    <Link 
+                        to='/forgot-password'
+                        className="forgotPasswordLink"
+                    >
+                        Forgot Password
+                    </Link>
+
+                    <div className="signInBar">
+                        <p className="signInText">
+                            Sign In
+                        </p>
+                        <button className="signInButton">
+                            <ArrowRightIcon fill="#ffffff" width='34px' height='34px' />
+                        </button>
+                    </div>
+                </form>
+
+                {/* Google OAuth */}
+
+                <Link to='/sign-up' className="registerLink">
+                    Sign Up
+                </Link>
+            </div>
+        );
   };
   
   export default SignIn;

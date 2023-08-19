@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { getAuth, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { setDoc, doc, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebase.config";
 import { ReactComponent as ArrowRightIcon } from "../assets/svg/keyboardArrowRightIcon.svg";
 import VisibilityIcon from "../assets/svg/visibilityIcon.svg";
@@ -46,6 +47,12 @@ const SignUp = () => {
                 updateProfile(auth.currentUser, {
                     displayName: name
                 });
+
+                const formData_copy = { ...formData };
+                delete formData_copy.password;
+                formData_copy.timestamp = serverTimestamp();
+
+                await setDoc(doc(db, 'users', user.uid), formData_copy);
 
                 navigate('/');
 

@@ -22,7 +22,7 @@ const Explorer = () => {
               Places for rent
             </p>
           </Link>
-          <Link to='/category/sell'>
+          <Link to='/category/sale'>
             <img src={SellCategoryImage} alt="sell" className='exploreCategoryImg'/>
             <p className="exploreCategoryName">
               Places for sale

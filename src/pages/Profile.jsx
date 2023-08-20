@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { db } from "../firebase.config";
 import { toast } from "react-toastify";
+import ArrowRight from '../assets/svg/keyboardArrowRightIcon.svg';
+import HomeIcon from '../assets/svg/homeIcon.svg';
 
 const Profile = () => {
 
@@ -113,6 +115,15 @@ const Profile = () => {
                         />
                     </form>
                 </div>
+
+                <Link 
+                    to='/create-listing'
+                    className="createListing"
+                >
+                    <img src={HomeIcon} alt="home" />
+                    <p>Sell or rent your home</p>
+                    <img src={ArrowRight} alt="arrow right" />
+                </Link>
             </main>
         </div>
     );

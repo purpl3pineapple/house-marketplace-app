@@ -1,20 +1,42 @@
-import { getAuth } from "firebase/auth";
+import { getAuth, updateProfile } from "firebase/auth";
+import { updateDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { db } from "../firebase.config";
 
 const Profile = () => {
 
-    const [user, setUser] = useState({});
-
     const auth = getAuth();
+    const navigate = useNavigate();
 
-    useEffect(() => {
+    const [changeDetails, setChangeDetails] = useState(false);
+    
+    const [formData, setFormData] = useState({
+        name: auth.currentUser.displayName,
+        email: auth.currentUser.email,
+    });
 
-        setUser(auth.currentUser);
+    const { name, email } = formData;
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    const log_out = () => {
+        auth.signOut();
+        navigate('/');
+    };
 
-    return user ? <h1>{user.displayName}</h1> : <h1>USER NOT FOUND</h1>;
+    return (
+        <div className="profile">
+            <header className="profileHeader">
+                <p className="pageHeader">My Profile</p>
+                <button 
+                    type="button" 
+                    className="logOut"
+                    onClick={log_out}
+                >
+                    Logout
+                </button>
+            </header>
+        </div>
+    );
   };
   
   export default Profile;

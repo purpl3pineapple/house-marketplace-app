@@ -45,7 +45,7 @@ const CreateListing = () => {
     const navigate = useNavigate();
     const isMounted = useRef(true);
 
-    const on_submit = (e) => {
+    const on_submit = async (e) => {
 
         e.preventDefault();
 
@@ -53,7 +53,65 @@ const CreateListing = () => {
 
         try {
 
-            
+            if (discountedPrice >= regularPrice){
+
+                toast.error('Discounted price must be less than regular price...');
+                setLoading(false);
+                return;
+            };
+
+            if (images.length > 6){
+
+                toast.error('Max 6 images...');
+                setLoading(false);
+                return;
+            };
+
+            let geolocation = {};
+            let location;
+
+            if(geolocationEnabled){
+
+                const response = await fetch(
+                    `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=${process.env.REACT_APP_GOOGLE_API_KEY}`
+                );
+
+                const data = await response.json();
+
+                const { status, results } = data;
+
+
+                geolocation.lat = results[0]?.geometry.location.lat ?? 0;
+                geolocation.lng = results[0]?.geometry.location.lng ?? 0;
+
+                location = status === 'ZERO_RESULTS' ? undefined : results[0]?.formatted_address;
+
+                console.log({status, results})
+
+                if (location === undefined || location.includes('undefined')){
+
+                    console.log('Please enter the correct address')
+
+                    setLoading(false);
+                    toast.error('Please enter the correct address');
+                    return;
+                };
+
+                setFormData((previousState) => ({
+                    ...previousState,
+                    address: location,
+                    latitude: geolocation.lat,
+                    longitude: geolocation.lng
+                }));
+
+            } else {
+
+                geolocation.lat = latitude;
+                geolocation.lng = longitude;
+                location = address;
+            };
+
+            setLoading(false);
 
         } catch(e){
 

@@ -51,61 +51,63 @@ const SignIn = () => {
         };
 
         return (
-            <div className="pageContainer">
-                <header>
-                    <p className="pageHeader">
-                        Welcome Back!
-                    </p>
-                </header>
-                <form onSubmit={on_submit}>
-                    <input 
-                        type="email" 
-                        className="emailInput" 
-                        placeholder="Email" 
-                        id="email" 
-                        value={email}
-                        onChange={on_change}
-                    />
-
-                    <div className="passwordInputDiv">
+            <>
+                <div className="pageContainer">
+                    <header>
+                        <p className="pageHeader">
+                            Welcome Back!
+                        </p>
+                    </header>
+                    <form onSubmit={on_submit}>
                         <input 
-                            id="password"
-                            type={showPassword ? 'text' : 'password'}
-                            className="passwordInput"
-                            placeholder="Password"
-                            value={password}
+                            type="email" 
+                            className="emailInput" 
+                            placeholder="Email" 
+                            id="email" 
+                            value={email}
                             onChange={on_change}
                         />
-                        <img 
-                            src={VisibilityIcon} alt="Show Password"
-                            className="showPassword"
-                            onClick={() => setShowPassword((previousState) => !previousState)}
-                        />
-                    </div>
 
-                    <Link 
-                        to='/forgot-password'
-                        className="forgotPasswordLink"
-                    >
-                        Forgot Password
+                        <div className="passwordInputDiv">
+                            <input 
+                                id="password"
+                                type={showPassword ? 'text' : 'password'}
+                                className="passwordInput"
+                                placeholder="Password"
+                                value={password}
+                                onChange={on_change}
+                            />
+                            <img 
+                                src={VisibilityIcon} alt="Show Password"
+                                className="showPassword"
+                                onClick={() => setShowPassword((previousState) => !previousState)}
+                            />
+                        </div>
+
+                        <Link 
+                            to='/forgot-password'
+                            className="forgotPasswordLink"
+                        >
+                            Forgot Password
+                        </Link>
+
+                        <div className="signInBar">
+                            <p className="signInText">
+                                Sign In
+                            </p>
+                            <button className="signInButton">
+                                <ArrowRightIcon fill="#ffffff" width='34px' height='34px' />
+                            </button>
+                        </div>
+                    </form>
+
+                    <OAuth />
+                    
+                    <Link to='/sign-up' className="registerLink">
+                        Sign Up
                     </Link>
-
-                    <div className="signInBar">
-                        <p className="signInText">
-                            Sign In
-                        </p>
-                        <button className="signInButton">
-                            <ArrowRightIcon fill="#ffffff" width='34px' height='34px' />
-                        </button>
-                    </div>
-                </form>
-
-                <OAuth />
-
-                <Link to='/sign-up' className="registerLink">
-                    Sign Up
-                </Link>
-            </div>
+                </div>
+            </>
         );
   };
   

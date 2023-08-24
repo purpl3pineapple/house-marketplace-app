@@ -1,5 +1,12 @@
 import { useEffect, useState, useRef } from 'react';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { 
+    getStorage, 
+    ref, 
+    uploadBytesResumable, 
+    getDownloadURL 
+} from "firebase/storage";
+import { db } from "../firebase.config";
 import { v4 as uuidv4 } from 'uuid';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
@@ -111,6 +118,64 @@ const CreateListing = () => {
                 geolocation.lng = longitude;
                 location = address;
             };
+
+
+            const store_image = async (image) => {
+
+                return new Promise((res, rej) => {
+
+                    const storage = getStorage();
+
+                    const file_name = `${auth.currentUser.uid}-${image.name}-${uuidv4()}`;
+
+                    //copied from documentation found @ https://firebase.google.com/docs/storage/web/upload-files?hl=en&authuser=0
+                    const storageRef = ref(storage, 'images/' + file_name);
+
+                    const uploadTask = uploadBytesResumable(storageRef, image);
+
+                    uploadTask.on('state_changed', 
+                        (snapshot) => {
+                            
+                            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                            console.log('Upload is ' + progress + '% done');
+                            switch (snapshot.state) {
+                            case 'paused':
+                                console.log('Upload is paused');
+                                break;
+                            case 'running':
+                                console.log('Upload is running');
+                                break;
+                            }
+                        }, 
+                        (error) => {
+                            
+                            rej(error);
+                        }, 
+                        () => {
+                            // Handle successful uploads on complete
+                            // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+                            getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                            
+                                res(downloadURL);
+                            });
+                        }
+                    );
+                });
+            };
+
+            
+
+            const imgURLs = await Promise.all(
+                [...images].map((img) => store_image(img))
+            )
+            .catch((e) => {
+
+                setLoading(false);
+                toast.error('Images could not be uploaded...');
+                return;
+            });
+
+            console.log(imgURLs);
 
             setLoading(false);
 

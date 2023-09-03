@@ -18,6 +18,8 @@ const Offers = () => {
 
   const [listings, setListings] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [lastFetchedListing, setLastFetchedListing] = useState(null);
+
   const params = useParams();
 
   useEffect(() => {
@@ -32,11 +34,16 @@ const Offers = () => {
         const q = query(
           listingsRef,
           where('offer', '==', true), 
-          orderBy('timestamp', 'desc', limit(10))
+          orderBy('timestamp', 'desc'),
+          limit(10)
         );
 
 
         const querySnapshot = await getDocs(q);
+
+        const lastVisible = querySnapshot.docs[querySnapshot.docs.length - 1];
+
+        setLastFetchedListing( lastVisible );
 
         const listings = [];
         
@@ -59,6 +66,44 @@ const Offers = () => {
     fetchListings();
 
   }, []);
+
+
+  const fetchMoreListings = async () => {
+
+    try {
+
+      const listingsRef = collection(db, 'listings');
+
+      const q = query(
+        listingsRef,
+        where('offer', '==', true), 
+        orderBy('timestamp', 'desc'),
+        startAfter(lastFetchedListing),
+        limit(10)
+      );
+
+      const querySnapshot = await getDocs(q);
+
+      const lastVisible = querySnapshot.docs[querySnapshot.docs.length - 1];
+
+      setLastFetchedListing( lastVisible );
+        
+      const listings = [];
+        
+      querySnapshot.forEach((dcmnt) => listings.push({
+        id: dcmnt.id,
+        data: dcmnt.data()
+      }));
+
+      setListings((previousState) => [...previousState, ...listings]);
+        
+      setLoading(false);
+
+    } catch(e){
+
+      toast.error('Could not get listings...');
+    };
+};
 
     
 
@@ -86,6 +131,16 @@ const Offers = () => {
                       />
                     ))
                   }</ul>
+                  <br />
+                  <br />
+                  {lastFetchedListing && (
+                    <p 
+                      className="loadMore" 
+                      onClick={fetchMoreListings}
+                    >
+                      Load More
+                    </p>
+                  )}
                 </main>
               </>
             )

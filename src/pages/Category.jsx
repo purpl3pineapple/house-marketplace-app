@@ -18,6 +18,8 @@ const Category = () => {
 
     const [listings, setListings] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [lastFetchedListing, setLastFetchedListing] = useState(null);
+
     const params = useParams();
 
     useEffect(() => {
@@ -39,6 +41,10 @@ const Category = () => {
 
 
                 const querySnapshot = await getDocs(q);
+
+                const lastVisible = querySnapshot.docs[querySnapshot.docs.length - 1];
+
+                setLastFetchedListing( lastVisible );
 
                 const listings = [];
                 
@@ -62,6 +68,46 @@ const Category = () => {
     }, [params.categoryName]);
 
     
+    const fetchMoreListings = async () => {
+
+        try {
+
+            const { categoryName } = params;
+
+            const listingsRef = collection(db, 'listings');
+
+
+            const q = query(
+                listingsRef,
+                where('type', '==', categoryName), 
+                orderBy('timestamp', 'desc'),
+                startAfter(lastFetchedListing),
+                limit(10)
+            );
+
+
+            const querySnapshot = await getDocs(q);
+
+            const lastVisible = querySnapshot.docs[querySnapshot.docs.length - 1];
+
+            setLastFetchedListing( lastVisible );
+            
+            const listings = [];
+            
+            querySnapshot.forEach((dcmnt) => listings.push({
+                id: dcmnt.id,
+                data: dcmnt.data()
+            }));
+
+
+            setListings((previousState) => [...previousState, ...listings]);
+            setLoading(false);
+
+        } catch(e){
+
+            toast.error('Could not get listings...');
+        };
+    };
 
 
     return (
@@ -97,6 +143,11 @@ const Category = () => {
                                     }
                                 </ul>
                             </main>
+                            <br />
+                            <br />
+                            {lastFetchedListing && (
+                                <p className="loadMore" onClick={fetchMoreListings}>Load More</p>
+                            )}
                         </>
                     )
                     : <p>No listings for {params.categoryName}</p>

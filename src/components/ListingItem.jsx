@@ -3,8 +3,7 @@ import { ReactComponent as DeleteIcon } from '../assets/svg/deleteIcon.svg';
 import BedIcon from '../assets/svg/bedIcon.svg';
 import BathtubIcon from '../assets/svg/bathtubIcon.svg';
 
-/*  */
-/*  */
+
 const ListingItem = ({ listing, id, onDelete }) => {
 
     const deleteListing = (listing, id) => {};

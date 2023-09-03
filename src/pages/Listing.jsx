@@ -50,7 +50,7 @@ const Listing = () => {
             <Swiper
             modules={[Navigation, Pagination, Scrollbar, A11y]}
             navigation
-            slidesPerView={2} 
+            slidesPerView={1} 
             pagination={{ clickable: true }}
             scrollbar={{ draggable: true }}
             >
@@ -60,8 +60,8 @@ const Listing = () => {
                         className="swiperSlideDiv"
                         style={{ 
                             background: `url(${listing.imgUrls[index]}) center no-repeat`, 
-                            backgroundSize: 'cover', 
-                            height: '300px'
+                            backgroundSize: '100% 300px', 
+                            height: '300px',
                         }}
                     ></div>
                     </SwiperSlide>
